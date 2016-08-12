@@ -20,8 +20,7 @@ static PyObject* my_func(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject* distance(PyObject *self, PyObject *args)
 {
     float x1, y1, x2, y2;
-    if (!PyArg_ParseTuple(args, "(ff)(ff)", &x1, &y1, &x2, &y2))
-    {
+    if (!PyArg_ParseTuple(args, "(ff)(ff)", &x1, &y1, &x2, &y2)) {
         return NULL;
     }
     return PyFloat_FromDouble(helper_distance(x1, y1, x2, y2));
@@ -31,14 +30,16 @@ static PyObject* resolve_line(PyObject *self, PyObject *args)
 {
     double x1, y1, x2, y2;
     double result[2];
-    if (!PyArg_ParseTuple(args, "(dd)(dd)", &x1, &y1, &x2, &y2))
-    {
+    if (!PyArg_ParseTuple(args, "(dd)(dd)", &x1, &y1, &x2, &y2)) {
         return NULL;
     }
 
-    double * KB = helper_resolve_line(x1, y1, x2, y2, result);
-
-    return Py_BuildValue("dd", KB[0], KB[1]);
+    helper_resolve_line(x1, y1, x2, y2, result);
+    if (result == 0 && result == 0){
+        return Py_BuildValue("(ss)", NULL, NULL);
+    }else{
+        return Py_BuildValue("dd", result[0], result[0]);
+    }
 }
 
 
