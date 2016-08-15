@@ -7,6 +7,7 @@ setup(
         Extension('my_module', sources=[
             'my_module.c',
             'helper.c',
+            'polygon.c',
         ])
     ],
 )
