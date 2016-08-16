@@ -57,7 +57,8 @@ static PyObject* get_polygon(PyObject *self, PyObject *args)
     PyObject *lst = PyList_New(array_len);
 
     /* printf("Array len: %d\n", array_len); */
-    for (int i = 0; i < array_len; i++) {
+    int i=0;
+    for (i; i < array_len; i++) {
         /* printf("val: %d\n", result[i]); */
         PyObject *num = PyFloat_FromDouble(result[i]);
         PyList_SET_ITEM(lst, i, num); 

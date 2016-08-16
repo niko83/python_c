@@ -24,7 +24,8 @@ int *polygon_get_polygon(double x, double y, int *array_len){
     *array_len = sizeof(polygon)/sizeof(int)/2;
     int *result = malloc(*array_len * sizeof(int));
 
-    for(int i = 0; i<*array_len; i++){
+    int i = 0;
+    for(i; i<*array_len; i++){
         result[i] = polygon[i][0];
     }
     return result;
