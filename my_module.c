@@ -44,36 +44,39 @@ static PyObject* resolve_line(PyObject *self, PyObject *args)
 }
 
 
-static PyObject* get_polygon(PyObject *self, PyObject *args)
+static PyObject* in_polygon(PyObject *self, PyObject *args)
 {
-    double x, y;
-    if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
+    double x, y; 
+    int polygon_idx;
+    if (!PyArg_ParseTuple(args, "ddi", &x, &y, &polygon_idx)) {
         return NULL;
     }
+    int result = polygon_in_polygon(x, y, polygon_idx);
+    if(result==1){
+        return Py_True;
+    }else{
+        return Py_False;
+    }
 
-    int array_len;
-    int *result = polygon_get_polygon(x, y, &array_len);
-
-    PyObject *lst = PyList_New(array_len);
+    /* PyObject *lst = PyList_New(array_len); */
 
     /* printf("Array len: %d\n", array_len); */
-    int i=0;
-    for (i; i < array_len; i++) {
-        /* printf("val: %d\n", result[i]); */
-        PyObject *num = PyFloat_FromDouble(result[i]);
-        PyList_SET_ITEM(lst, i, num); 
-    }
-    free(result);
+    /* int i; */
+    /* for (i=0; i < array_len; i++) { */
+        /* [> printf("val: %d\n", result[i]); <] */
+        /* PyObject *num = PyFloat_FromDouble(result[i]); */
+        /* PyList_SET_ITEM(lst, i, num);  */
+    /* } */
+    /* free(result); */
 
-    return lst;
+    /* return lst; */
 }
-
 
 static PyMethodDef my_module_methods[] = { 
     {"my_func", my_func, METH_VARARGS | METH_KEYWORDS, "docs" },  
     {"distance", distance, METH_VARARGS, "docs"},
     {"resolve_line", resolve_line, METH_VARARGS, "docs"},
-    {"get_polygon", get_polygon, METH_VARARGS, "docs"},
+    {"in_polygon", in_polygon, METH_VARARGS, "docs"},
     {NULL, NULL, 0, NULL}
 };
 
