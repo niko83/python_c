@@ -51,12 +51,8 @@ static PyObject* in_polygon(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "ddi", &x, &y, &polygon_idx)) {
         return NULL;
     }
-    int result = polygon_in_polygon(x, y, polygon_idx);
-    if(result==1){
-        return Py_True;
-    }else{
-        return Py_False;
-    }
+
+    return Py_BuildValue("i", polygon_in_polygon(x, y, polygon_idx));
 
     /* PyObject *lst = PyList_New(array_len); */
 
