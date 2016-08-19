@@ -6,6 +6,14 @@
 
 int polygon_in_polygon(double x, double y, int polygon_idx){
 
+    if (
+        x < all_polygons[polygon_idx].edge->x_min ||
+        x > all_polygons[polygon_idx].edge->x_max ||
+        y < all_polygons[polygon_idx].edge->y_min ||
+        y > all_polygons[polygon_idx].edge->y_max
+    )
+        return 0;
+
     int k;
     int c=0;
     int cnt = all_polygons[polygon_idx].el_count;
