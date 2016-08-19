@@ -18,16 +18,17 @@ int polygon_in_polygon(double x, double y, int polygon_idx){
     int c=0;
     int cnt = all_polygons[polygon_idx].el_count;
     for(k=0; k < cnt; k++){
-        int px = **(*all_polygons[polygon_idx].mtp + k);
-        int py = *(*(*all_polygons[polygon_idx].mtp + k) + 1);
+
+        int px = (*all_polygons[polygon_idx].mtp+k)->x;
+        int py = (*all_polygons[polygon_idx].mtp+k)->y;
 
         int px_prev, py_prev;
         if(k==0){
-            px_prev = **(*all_polygons[polygon_idx].mtp + cnt-1);
-            py_prev = *(*(*all_polygons[polygon_idx].mtp + cnt-1) + 1);
+            px_prev = (*all_polygons[polygon_idx].mtp+cnt-1)->x;
+            py_prev = (*all_polygons[polygon_idx].mtp+cnt-1)->y; 
         }else{
-            px_prev = **(*all_polygons[polygon_idx].mtp + k-1);
-            py_prev = *(*(*all_polygons[polygon_idx].mtp + k-1) + 1);
+            px_prev = (*all_polygons[polygon_idx].mtp+k-1)->x;
+            py_prev = (*all_polygons[polygon_idx].mtp+k-1)->y; 
         }
         if (
             ((py <= y && y < py_prev) || (py_prev <= y && y < py)) && 

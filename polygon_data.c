@@ -1,4 +1,11 @@
-typedef int (point_list)[][2];
+
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+typedef Point (point_list)[];
+
 typedef struct {
     int x_min;
     int x_max;
@@ -8,7 +15,7 @@ typedef struct {
 
 static point_list polygon0 = {{0,0}, {100,0}, {100, 100}, {0, 100}};
 static point_list polygon1 = {{0,0}, {1000,0}, {1000, 1000}, {0, 1000}};
-static point_list polygon2 = {{0,0}, {10000,0}, {10000, 10000}, {0, 10000}};
+static point_list polygon2 = {{1,2}, {10030,4}, {10050, 10060}, {7, 10080}};
 
 static Edge p0 = {0, 100, 0, 100};
 static Edge p1 = {0, 1000, 0, 1000};
