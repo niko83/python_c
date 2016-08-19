@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "polygon_data.h"
+#include "polygon_data.c"
 
 
 int polygon_in_polygon(double x, double y, int polygon_idx){
