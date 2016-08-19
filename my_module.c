@@ -53,19 +53,18 @@ static PyObject* in_polygon(PyObject *self, PyObject *args)
     }
 
     return Py_BuildValue("i", polygon_in_polygon(x, y, polygon_idx));
+}
 
-    /* PyObject *lst = PyList_New(array_len); */
 
-    /* printf("Array len: %d\n", array_len); */
-    /* int i; */
-    /* for (i=0; i < array_len; i++) { */
-        /* [> printf("val: %d\n", result[i]); <] */
-        /* PyObject *num = PyFloat_FromDouble(result[i]); */
-        /* PyList_SET_ITEM(lst, i, num);  */
-    /* } */
-    /* free(result); */
+static PyObject* get_polygon_idx_collision(PyObject *self, PyObject *args)
+{
+    double x, y; 
+    int polygon_idx;
+    if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
+        return NULL;
+    }
 
-    /* return lst; */
+    return Py_BuildValue("i", polygon_get_polygon_idx_collision(x, y));
 }
 
 static PyMethodDef my_module_methods[] = { 
@@ -73,6 +72,7 @@ static PyMethodDef my_module_methods[] = {
     {"distance", distance, METH_VARARGS, "docs"},
     {"resolve_line", resolve_line, METH_VARARGS, "docs"},
     {"in_polygon", in_polygon, METH_VARARGS, "docs"},
+    {"get_polygon_idx_collision",  get_polygon_idx_collision, METH_VARARGS, "docs"},
     {NULL, NULL, 0, NULL}
 };
 

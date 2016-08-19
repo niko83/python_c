@@ -40,3 +40,16 @@ int polygon_in_polygon(double x, double y, int polygon_idx){
 
     return c % 2;
 }
+
+
+int polygon_get_polygon_idx_collision(double x, double y)
+{
+    int polygons_cnt =  sizeof(all_polygons) / sizeof(all_polygons[0]);
+    int polygon_idx;
+    for (polygon_idx=0; polygon_idx<polygons_cnt; polygon_idx++){
+        if (polygon_in_polygon(x, y, polygon_idx) == 1){
+            return polygon_idx;
+        }
+    } 
+    return 0;
+}
