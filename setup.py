@@ -8,6 +8,7 @@ setup(
             'my_module.c',
             'helper.c',
             'polygon.c',
+            'noddy.c',
         ])
     ],
 )

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "helper.h"
 #include "polygon.h"
+#include "noddy.c"
+
 
 static PyObject* my_func(PyObject *self, PyObject *args, PyObject *kwargs)
 {
@@ -59,7 +61,6 @@ static PyObject* in_polygon(PyObject *self, PyObject *args)
 static PyObject* get_polygon_idx_collision(PyObject *self, PyObject *args)
 {
     double x, y; 
-    int polygon_idx;
     if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
         return NULL;
     }
@@ -87,5 +88,17 @@ static struct PyModuleDef my_module_definition = {
 PyMODINIT_FUNC PyInit_my_module(void)
 {
     Py_Initialize();
-    return PyModule_Create(&my_module_definition);
+    PyObject* m; 
+
+    noddy_NoddyType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&noddy_NoddyType) < 0)
+        return NULL;
+
+    m = PyModule_Create(&my_module_definition);
+    if (m == NULL)
+        return NULL;
+
+    Py_INCREF(&noddy_NoddyType);
+    PyModule_AddObject(m, "Noddy", (PyObject *)&noddy_NoddyType);
+    return m;
 }
