@@ -3,6 +3,7 @@
 #include "helper.h"
 #include "polygon.h"
 #include "noddy.c"
+#include "bullet.h"
 
 
 static PyObject* my_func(PyObject *self, PyObject *args, PyObject *kwargs)
@@ -68,12 +69,30 @@ static PyObject* get_polygon_idx_collision(PyObject *self, PyObject *args)
     return Py_BuildValue("i", polygon_get_polygon_idx_collision(x, y));
 }
 
+
+static PyObject* calculate_position(PyObject *self, PyObject *args)
+{
+    double FRAME_INTERVAL; 
+    int ricochet;
+
+    Result result;
+
+    if (!PyArg_ParseTuple(args, "di", &FRAME_INTERVAL, &ricochet)) {
+        return NULL;
+    }
+
+    bullet_calculate_position(FRAME_INTERVAL, ricochet, result);
+
+    return Py_BuildValue("i", 1);
+}
+
 static PyMethodDef my_module_methods[] = { 
     {"my_func", my_func, METH_VARARGS | METH_KEYWORDS, "docs" },  
     {"distance", distance, METH_VARARGS, "docs"},
     {"resolve_line", resolve_line, METH_VARARGS, "docs"},
     {"in_polygon", in_polygon, METH_VARARGS, "docs"},
     {"get_polygon_idx_collision",  get_polygon_idx_collision, METH_VARARGS, "docs"},
+    {"calculate_position",  calculate_position, METH_VARARGS, "docs"},
     {NULL, NULL, 0, NULL}
 };
 

@@ -2,19 +2,9 @@
 #include "stdlib.h"
 #include "helper.h"
 #include "polygon_data.c"
+#include "polygon.h"
+#include "bullet.h"
  
-#define M_PI 3.14159265358979323846
-
-typedef struct {
-    double life_limit;
-    double able_to_make_tracing;
-    double current_speed_x;
-    double current_speed_y;
-    double current_position_x;
-    double current_position_y;
-    double approx_x;
-    double approx_y;
-} Result;
 
 const int CELL_STEP = 80;
 
@@ -48,7 +38,7 @@ double vector_get_angle(double x, double y){
 }
 
 
-double get_intersection_angle(int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, int p4x, int p4y, double *angle_intersection){
+int get_intersection_angle(int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, int p4x, int p4y, double *angle_intersection){
     
     double x;
 
@@ -67,8 +57,6 @@ double get_intersection_angle(int p1x, int p1y, int p2x, int p2y, int p3x, int p
     }
 
     if ((p1x<=x && x<=p2x) || (p2x<=x && x<=p1x)) {
-        double nil_vector_ship_x, nil_vector_ship_y, nil_vector_polygon_x, nil_vector_polygon_y;
-
 
         double ship_angle = vector_get_angle(p2x - p1x, p2y - p1y); 
 
@@ -105,6 +93,7 @@ int get_angle_collision(double x1, double y1, double x2, double y2, int polygon_
             py_prev = (*all_polygons[polygon_idx].mtp+k-1)->y; 
         }
            
+        double result;
         if (get_intersection_angle(x1, y1, x2, y2, px, py, px_prev, py_prev, &result) == 1){
             return 1;
         }
@@ -113,7 +102,7 @@ int get_angle_collision(double x1, double y1, double x2, double y2, int polygon_
 
 }
 
-void calculate_position(
+void bullet_calculate_position(
         double FRAME_INTERVAL,
         int ricochet,
         Result result
@@ -128,7 +117,7 @@ void calculate_position(
         result.able_to_make_tracing += FRAME_INTERVAL;
     }
 
-    if (result.current_speed_x == result.current_speed_y == 0){
+    if (result.current_speed_x == 0 && result.current_speed_y == 0){
         return;
     }
 
@@ -138,17 +127,16 @@ void calculate_position(
     result.approx_x = floor(candidat_position_x/CELL_STEP);
     result.approx_y = floor(candidat_position_y/CELL_STEP);
 
-        /* try: */
-            /* if polygon_cell[self.approx_x][self.approx_y]: */
-                /* polygon_idx = maps.get_polygon_world_collision(candidat_position_x, candidat_position_y) */
-            /* else: */
-                /* polygon = None */
-        /* except IndexError: */
-            /* self.approx_x = self.approx_y = 0 */
-            /* has_world_collision = True */
-            /* polygon_idx = 0
 
-    int polygon_idx = 1;
+    int polygon_idx = 0;
+    if (result.approx_x <100000 && result.approx_y < 100000){
+        if (*polygon_cell[result.approx_x][result.approx_y] == 1){
+            polygon_idx = polygon_get_polygon_idx_collision(candidat_position_x, candidat_position_y);
+        }
+    } else {
+        result.approx_x = 0;
+        result.approx_y = 0;
+    }
 
     if (polygon_idx && ricochet==0){
         result.life_limit = -1;
@@ -156,20 +144,15 @@ void calculate_position(
     }
 
     double angle;
-    if (polygon && ricochet==1){
-        
+    if (polygon_idx && ricochet==1){
         if (get_angle_collision(result.current_position_x, result.current_position_y, candidat_position_x, candidat_position_y, polygon_idx, &angle) == 1){
-            
-        }else{
-            result.life_limit = -1;  // выстрел прямо в скале
-            return;
-        }
-
-        /* self.current_speed.reinit( */
             /* length=self.current_speed.length, */
             /* angle=angle*2 + self.current_speed.angle() */
-        /* ) */
-        return;
+            result.current_speed_x = 11111111111111;
+            result.current_speed_y = 11111111111111;
+        }else{
+            result.life_limit = -1;
+        }
     }
-
+    return;
 }

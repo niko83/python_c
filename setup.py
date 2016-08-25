@@ -64,6 +64,7 @@ setup(
             'helper.c',
             'polygon.c',
             'noddy.c',
+            'bullet.c',
         ])
     ],
     cmdclass={

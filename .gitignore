@@ -3,3 +3,4 @@ build
 polygon_data.c
 generator.py
 __pycache__
+nohup.out

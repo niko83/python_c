@@ -27,6 +27,8 @@ static Edge p_fake  =   {0, 1, 0, 1};
 //static Edge p4  =   {0, 3371, 1839, 1889};
 //static Edge p5  =   {0, 50, 0, 1889};
 
+int * polygon_cell[100][100];
+
 
 
 static struct {
