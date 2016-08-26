@@ -1,5 +1,5 @@
 make:
-	rm -rf build; clear; python setup.py build install; python test2.py
+	rm -rf build; clear; python setup.py build install; echo "==========\n"; python test2.py
 perform_test:
 	bash -c "\
 	    python setup.py build; python setup.py install; \

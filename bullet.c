@@ -103,60 +103,72 @@ int get_angle_collision(double x1, double y1, double x2, double y2, int polygon_
 
 }
 
+
 void bullet_calculate_position(
         double FRAME_INTERVAL,
-        int ricochet,
-        Result * result
+        PyObject * obj
 ){
-    if (result->life_limit < FRAME_INTERVAL){
-        result->life_limit = -1;
+    double life_limit = PyFloat_AsDouble(PyObject_GetAttrString(obj, "life_limit"));
+
+    if (life_limit < FRAME_INTERVAL){
+        PyObject_SetAttrString(obj, "life_limit", PyFloat_FromDouble(-1));
         return;
     }
-    result->life_limit -= FRAME_INTERVAL;
+    PyObject_SetAttrString(obj, "life_limit", PyFloat_FromDouble(life_limit-FRAME_INTERVAL));
 
-    if (result->able_to_make_tracing > -100){
-        result->able_to_make_tracing += FRAME_INTERVAL;
+    double able_to_make_tracing = PyFloat_AsDouble(PyObject_GetAttrString(obj, "able_to_make_tracing"));
+    if (able_to_make_tracing > -100){
+        PyObject_SetAttrString(obj, "able_to_make_tracing", PyFloat_FromDouble(able_to_make_tracing+FRAME_INTERVAL));
     }
 
-    if (result->current_speed_x == 0 && result->current_speed_y == 0){
+    double current_speed_x = PyFloat_AsDouble(PyObject_GetAttrString(obj, "current_speed_x"));
+    double current_speed_y = PyFloat_AsDouble(PyObject_GetAttrString(obj, "current_speed_y"));
+    if (current_speed_x == 0 && current_speed_y == 0){
         return;
     }
 
-    double candidat_position_x = result->current_position_x + result->current_speed_x * FRAME_INTERVAL;
-    double candidat_position_y = result->current_position_y - result->current_speed_y * FRAME_INTERVAL;
+    double current_position_x = PyFloat_AsDouble(PyObject_GetAttrString(obj, "current_position_x"));
+    double current_position_y = PyFloat_AsDouble(PyObject_GetAttrString(obj, "current_position_y"));
 
-    result->approx_x = floor(candidat_position_x/CELL_STEP);
-    result->approx_y = floor(candidat_position_y/CELL_STEP);
+    double candidat_position_x = current_position_x + current_speed_x * FRAME_INTERVAL;
+    double candidat_position_y = current_position_y - current_speed_y * FRAME_INTERVAL;
 
+    int approx_x = floor(candidat_position_x/CELL_STEP);
+    int approx_y = floor(candidat_position_y/CELL_STEP);
+
+    PyObject_SetAttrString(obj, "approx_x", PyLong_FromLong(approx_x));
+    PyObject_SetAttrString(obj, "approx_y", PyLong_FromLong(approx_y));
 
     int polygon_idx = 0;
-    if (result->approx_x <100000 && result->approx_y < 100000){
-        if (polygon_cell[result->approx_x][result->approx_y] == 1){
+    if (approx_x < 100000 && approx_y < 100000){
+        if (polygon_cell[approx_x][approx_y] == 1){
             polygon_idx = polygon_get_polygon_idx_collision(candidat_position_x, candidat_position_y);
         }
     } else {
-        result->approx_x = 0;
-        result->approx_y = 0;
+        // fallback IndexError
+        PyObject_SetAttrString(obj, "approx_x", PyLong_FromLong(0));
+        PyObject_SetAttrString(obj, "approx_y", PyLong_FromLong(0));
     }
 
+    int ricochet = PyLong_AsLong(PyObject_GetAttrString(obj, "ricochet"));
     if (polygon_idx && ricochet==0){
-        result->life_limit = -1;
+        PyObject_SetAttrString(obj, "life_limit", PyFloat_FromDouble(-1));
         return;
     }
 
     double angle;
     if (polygon_idx && ricochet==1){
-        if (get_angle_collision(result->current_position_x, result->current_position_y, candidat_position_x, candidat_position_y, polygon_idx, &angle) == 1){
+        if (get_angle_collision(current_position_x, current_position_y, candidat_position_x, candidat_position_y, polygon_idx, &angle) == 1){
             /* length=self.current_speed.length, */
             /* angle=angle*2 + self.current_speed.angle() */
-            result->current_speed_x = 400; //11111111111111;
-            result->current_speed_y = 400; //11111111111111;
+            PyObject_SetAttrString(obj, "current_speed_x", PyFloat_FromDouble(400));
+            PyObject_SetAttrString(obj, "current_speed_y", PyFloat_FromDouble(400));
         }else{
-            result->life_limit = -1;
+            PyObject_SetAttrString(obj, "life_limit", PyFloat_FromDouble(-1));
         }
     }
 
-    result->current_position_x = candidat_position_x;
-    result->current_position_y = candidat_position_y;
+    PyObject_SetAttrString(obj, "current_position_x", PyFloat_FromDouble(candidat_position_x));
+    PyObject_SetAttrString(obj, "current_position_y", PyFloat_FromDouble(candidat_position_y));
     return;
 }

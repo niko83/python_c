@@ -74,58 +74,13 @@ static PyObject* get_polygon_idx_collision(PyObject *self, PyObject *args)
 static PyObject* calculate_position(PyObject *self, PyObject *args)
 {
     double FRAME_INTERVAL; 
-    int ricochet;
+    PyObject * obj;
 
-
-    double life_limit;
-    double able_to_make_tracing;
-    double current_speed_x;
-    double current_speed_y;
-    double current_position_x;
-    double current_position_y;
-    int approx_x;
-    int approx_y;
-
-    if (!PyArg_ParseTuple(
-            args, "diddddddii", 
-            &FRAME_INTERVAL, 
-            &ricochet,
-            &life_limit,
-            &able_to_make_tracing,
-            &current_speed_x,
-            &current_speed_y,
-            &current_position_x,
-            &current_position_y,
-            &approx_x,
-            &approx_y
-    )) {
+    if (!PyArg_ParseTuple(args, "dO", &FRAME_INTERVAL, &obj)) {
         return NULL;
     }
-
-    Result result = {
-        life_limit,
-        able_to_make_tracing,
-        current_speed_x,
-        current_speed_y,
-        current_position_x,
-        current_position_y,
-        approx_x,
-        approx_y
-    };
-
-    bullet_calculate_position(FRAME_INTERVAL, ricochet, &result);
-
-    return Py_BuildValue(
-            "ddddddii",
-            result.life_limit,
-            result.able_to_make_tracing,
-            result.current_speed_x,
-            result.current_speed_y,
-            result.current_position_x,
-            result.current_position_y,
-            result.approx_x,
-            result.approx_y
-  );
+    bullet_calculate_position(FRAME_INTERVAL, obj);
+    return Py_BuildValue("s", NULL);
 }
 
 static PyMethodDef my_module_methods[] = { 
