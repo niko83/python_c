@@ -38,6 +38,7 @@ static PyObject* resolve_line(PyObject *self, PyObject *args)
         return NULL;
     }
 
+
     helper_resolve_line(x1, y1, x2, y2, result);
     if (result == 0 && result == 0){
         return Py_BuildValue("(ss)", NULL, NULL);
@@ -75,15 +76,56 @@ static PyObject* calculate_position(PyObject *self, PyObject *args)
     double FRAME_INTERVAL; 
     int ricochet;
 
-    Result result;
 
-    if (!PyArg_ParseTuple(args, "di", &FRAME_INTERVAL, &ricochet)) {
+    double life_limit;
+    double able_to_make_tracing;
+    double current_speed_x;
+    double current_speed_y;
+    double current_position_x;
+    double current_position_y;
+    int approx_x;
+    int approx_y;
+
+    if (!PyArg_ParseTuple(
+            args, "diddddddii", 
+            &FRAME_INTERVAL, 
+            &ricochet,
+            &life_limit,
+            &able_to_make_tracing,
+            &current_speed_x,
+            &current_speed_y,
+            &current_position_x,
+            &current_position_y,
+            &approx_x,
+            &approx_y
+    )) {
         return NULL;
     }
 
-    bullet_calculate_position(FRAME_INTERVAL, ricochet, result);
+    Result result = {
+        life_limit,
+        able_to_make_tracing,
+        current_speed_x,
+        current_speed_y,
+        current_position_x,
+        current_position_y,
+        approx_x,
+        approx_y
+    };
 
-    return Py_BuildValue("i", 1);
+    bullet_calculate_position(FRAME_INTERVAL, ricochet, &result);
+
+    return Py_BuildValue(
+            "ddddddii",
+            result.life_limit,
+            result.able_to_make_tracing,
+            result.current_speed_x,
+            result.current_speed_y,
+            result.current_position_x,
+            result.current_position_y,
+            result.approx_x,
+            result.approx_y
+  );
 }
 
 static PyMethodDef my_module_methods[] = { 

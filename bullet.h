@@ -15,5 +15,5 @@ typedef struct {
 void bullet_calculate_position(
         double FRAME_INTERVAL,
         int ricochet,
-        Result result
+        Result * result
 );

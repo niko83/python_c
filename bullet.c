@@ -2,11 +2,12 @@
 #include "stdlib.h"
 #include "helper.h"
 #include "polygon_data.c"
+#include "polygon_data.h"
 #include "polygon.h"
 #include "bullet.h"
  
 
-const int CELL_STEP = 80;
+const int CELL_STEP = 60;
 
 double vector_get_angle(double x, double y){
     
@@ -105,54 +106,57 @@ int get_angle_collision(double x1, double y1, double x2, double y2, int polygon_
 void bullet_calculate_position(
         double FRAME_INTERVAL,
         int ricochet,
-        Result result
+        Result * result
 ){
-    if (result.life_limit < FRAME_INTERVAL){
-        result.life_limit = -1;
+    if (result->life_limit < FRAME_INTERVAL){
+        result->life_limit = -1;
         return;
     }
-    result.life_limit -= FRAME_INTERVAL;
+    result->life_limit -= FRAME_INTERVAL;
 
-    if (result.able_to_make_tracing > -100){
-        result.able_to_make_tracing += FRAME_INTERVAL;
+    if (result->able_to_make_tracing > -100){
+        result->able_to_make_tracing += FRAME_INTERVAL;
     }
 
-    if (result.current_speed_x == 0 && result.current_speed_y == 0){
+    if (result->current_speed_x == 0 && result->current_speed_y == 0){
         return;
     }
 
-    double candidat_position_x = result.current_position_x + result.current_speed_x * FRAME_INTERVAL;
-    double candidat_position_y = result.current_position_y - result.current_speed_y * FRAME_INTERVAL;
+    double candidat_position_x = result->current_position_x + result->current_speed_x * FRAME_INTERVAL;
+    double candidat_position_y = result->current_position_y - result->current_speed_y * FRAME_INTERVAL;
 
-    result.approx_x = floor(candidat_position_x/CELL_STEP);
-    result.approx_y = floor(candidat_position_y/CELL_STEP);
+    result->approx_x = floor(candidat_position_x/CELL_STEP);
+    result->approx_y = floor(candidat_position_y/CELL_STEP);
 
 
     int polygon_idx = 0;
-    if (result.approx_x <100000 && result.approx_y < 100000){
-        if (*polygon_cell[result.approx_x][result.approx_y] == 1){
+    if (result->approx_x <100000 && result->approx_y < 100000){
+        if (polygon_cell[result->approx_x][result->approx_y] == 1){
             polygon_idx = polygon_get_polygon_idx_collision(candidat_position_x, candidat_position_y);
         }
     } else {
-        result.approx_x = 0;
-        result.approx_y = 0;
+        result->approx_x = 0;
+        result->approx_y = 0;
     }
 
     if (polygon_idx && ricochet==0){
-        result.life_limit = -1;
+        result->life_limit = -1;
         return;
     }
 
     double angle;
     if (polygon_idx && ricochet==1){
-        if (get_angle_collision(result.current_position_x, result.current_position_y, candidat_position_x, candidat_position_y, polygon_idx, &angle) == 1){
+        if (get_angle_collision(result->current_position_x, result->current_position_y, candidat_position_x, candidat_position_y, polygon_idx, &angle) == 1){
             /* length=self.current_speed.length, */
             /* angle=angle*2 + self.current_speed.angle() */
-            result.current_speed_x = 11111111111111;
-            result.current_speed_y = 11111111111111;
+            result->current_speed_x = 400; //11111111111111;
+            result->current_speed_y = 400; //11111111111111;
         }else{
-            result.life_limit = -1;
+            result->life_limit = -1;
         }
     }
+
+    result->current_position_x = candidat_position_x;
+    result->current_position_y = candidat_position_y;
     return;
 }
